@@ -17,7 +17,8 @@ export default function Home({ auth }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <h1 className="text-6xl text-gray-600 dark:text-white">Welcome!</h1>
+                    <h1 className="text-8xl w-fit text-transparent bg-clip-text bg-gradient-to-r from-[#00DBDE] to-[#FC00FF] font-medium">GuestNest</h1>
+                    <p className="mt-4 text-2xl text-gray-600 font-medium dark:text-lime-50">The best way to manage your guests.</p>
                 </div>
             </div>
         </Layout>
