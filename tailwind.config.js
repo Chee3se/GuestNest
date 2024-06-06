@@ -12,8 +12,19 @@ export default {
 
     theme: {
         extend: {
-            fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+            keyframes: {
+                'roll-in-left': {
+                    '0%': { transform: 'translateX(-100%) rotate(-360deg)', opacity: '0' },
+                    '100%': { transform: 'translateX(0) rotate(0)', opacity: '1' },
+                },
+                'roll-in-right': {
+                    '0%': { transform: 'translateX(100%) rotate(360deg)', opacity: '0' },
+                    '100%': { transform: 'translateX(0) rotate(0)', opacity: '1' },
+                },
+            },
+            animation: {
+                'roll-in-left': 'roll-in-left 1s ease-in-out',
+                'roll-in-right': 'roll-in-right 1s ease-in-out',
             },
         },
     },

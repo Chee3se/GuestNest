@@ -14,14 +14,17 @@ export default function Layout({ user, header, children }) {
             <nav className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
+                        <ThemeController className={"absolute xl:right-4 top-2"}/>
+                        <Link href={route('home')} className="flex-shrink-0 flex items-center pr-20">
+                            <ApplicationLogo className="hidden xl:block h-10 w-auto fill-current text-gray-500 dark:text-gray-300" />
+                        </Link>
                         <div className="flex">
-                            <div className="shrink-0 flex items-center">
-                                <ThemeController />
-                            </div>
-
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink href={route('home')} active={route().current('home')}>
                                     Home
+                                </NavLink>
+                                <NavLink href={route('login')} active={route().current('login')}>
+                                    Browse
                                 </NavLink>
                             </div>
                         </div>
