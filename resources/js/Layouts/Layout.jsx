@@ -15,10 +15,10 @@ export default function Layout({ user, header, children }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <ThemeController className={"absolute xl:right-4 top-2"}/>
-                        <Link href={route('home')} className="flex-shrink-0 flex items-center pr-20">
+                        <Link href={route('home')} className="flex-shrink-0 flex items-center">
                             <ApplicationLogo className="hidden xl:block h-10 w-auto fill-current text-gray-500 dark:text-gray-300" />
                         </Link>
-                        <div className="flex">
+                        <div className="flex pl-10">
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink href={route('home')} active={route().current('home')}>
                                     Home
@@ -29,7 +29,7 @@ export default function Layout({ user, header, children }) {
                             </div>
                         </div>
 
-                        <div className="hidden sm:flex sm:items-center sm:ms-6">
+                        <div className="hidden sm:flex sm:items-center sm:ms-6 w-20">
                             <div className="ms-3 relative">
                                 {user ? (<Dropdown>
                                     <Dropdown.Trigger>
@@ -64,11 +64,17 @@ export default function Layout({ user, header, children }) {
                                     </Dropdown.Content>
                                 </Dropdown>) : (
                                     <>
-                                        <Link href={route('login')} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                                            Log in
-                                        </Link>
-                                        <Link href={route('register')} className="ms-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                                            Register
+                                        <Link href={route('register')}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="40px"
+                                                 viewBox="0 -960 960 960" width="40px" className={
+                                                'fill-current hover:text-gray-600 dark:hover:text-gray-200 duration-500' +
+                                                ((route().current('register'))
+                                                        ? 'fill-current text-gray-600 duration-500 dark:text-gray-200'
+                                                        : 'fill-current text-gray-400 duration-500'
+                                                )}>
+                                                <path
+                                                    d="M520-120q-17 0-28.5-11.5T480-160q0-17 11.5-28.5T520-200h240v-560H520q-17 0-28.5-11.5T480-800q0-17 11.5-28.5T520-840h240q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H520Zm-73-320H160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520h287l-75-75q-11-11-11-27t11-28q11-12 28-12.5t29 11.5l143 143q12 12 12 28t-12 28L429-309q-12 12-28.5 11.5T372-310q-11-12-10.5-28.5T373-366l74-74Z"/>
+                                            </svg>
                                         </Link>
                                     </>
                                 )}
