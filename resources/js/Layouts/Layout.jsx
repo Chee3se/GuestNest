@@ -23,7 +23,7 @@ export default function Layout({ user, header, children }) {
                                 <NavLink href={route('home')} active={route().current('home')}>
                                     Home
                                 </NavLink>
-                                <NavLink href={route('login')} active={route().current('login')}>
+                                <NavLink href={route('property.index')} active={route().current('property.index')}>
                                     Browse
                                 </NavLink>
                             </div>
