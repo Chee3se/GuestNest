@@ -18,4 +18,9 @@ class Property extends Model
     {
         return $this->hasOne(Image::class)->where('is_main', true);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

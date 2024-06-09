@@ -29,8 +29,8 @@ export default function Login({ status, canResetPassword }) {
     return (
         <Layout>
             <Head title="Log in"/>
-            <div className="mt-96 flex flex-col sm:justify-center items-center pb-20 sm:pt-0 bg-gray-100 dark:bg-gray-900">
-                <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+            <div className="flex-grow flex flex-col sm:justify-center items-center sm:pt-0 bg-gray-100 dark:bg-gray-900">
+                <div className="my-auto w-full sm:max-w-md px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
                     {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
 
                     <form onSubmit={submit}>
@@ -79,14 +79,12 @@ export default function Login({ status, canResetPassword }) {
                         </div>
 
                         <div className="flex items-center justify-end mt-4">
-                            {canResetPassword && (
-                                <Link
-                                    href={route('password.request')}
-                                    className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                                >
-                                    Forgot your password?
-                                </Link>
-                            )}
+                            <Link
+                                href={route('register')}
+                                className="mr-auto underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                            >
+                                Dont have an account?
+                            </Link>
 
                             <PrimaryButton className="ms-4" disabled={processing}>
                                 Log in

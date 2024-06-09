@@ -18,6 +18,14 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->integer('price');
+            $table->string('guests');
+            $table->string('bedrooms');
+            $table->string('beds');
+            $table->string('baths');
+            $table->boolean('available');
+            $table->string('available_from');
+            $table->string('available_to');
+            $table->string('address');
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();
             $table->timestamps();

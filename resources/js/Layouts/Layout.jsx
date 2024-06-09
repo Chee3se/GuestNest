@@ -10,7 +10,7 @@ export default function Layout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 duration-500">
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 duration-500 flex flex-col">
             <nav className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -112,6 +112,9 @@ export default function Layout({ user, header, children }) {
                         <ResponsiveNavLink href={route('home')} active={route().current('home')}>
                             Home
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('property.index')} active={route().current('property.index')}>
+                            Browse
+                        </ResponsiveNavLink>
                     </div>
 
                     {user ? (<div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
@@ -143,7 +146,7 @@ export default function Layout({ user, header, children }) {
                 </header>
             ) : null}
 
-            <main>{children}</main>
+            <main className="w-full flex-grow flex flex-col">{children}</main>
         </div>
     );
 }
