@@ -26,6 +26,22 @@ export default function Layout({ user, header, children }) {
                                 <NavLink href={route('property.index')} active={route().current('property.index')}>
                                     Browse
                                 </NavLink>
+                                {user ? (
+                                    <>
+                                        <NavLink href={route('reservations.index')} active={route().current('reservations.index')}>
+                                            Reservations
+                                        </NavLink>
+                                        {user?.roles[0]?.name === 'admin' ? (
+                                            <NavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
+                                                Admin Dashboard
+                                            </NavLink>
+                                        ) : (
+                                            <NavLink href={route('user.dashboard')} active={route().current('user.dashboard')}>
+                                                Dashboard
+                                            </NavLink>
+                                        )}
+                                    </>
+                                ) : null}
                             </div>
                         </div>
 

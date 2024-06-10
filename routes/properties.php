@@ -30,6 +30,3 @@ Route::middleware(CheckPropertyOwner::class)->group(function () {
 
 // API
 Route::post('/api/properties', [PropertyController::class, 'all'])->name('property.all');
-
-// Reserve
-Route::post('/property/{id}/reserve', [ReservationController::class, 'store'])->name('property.reserve');

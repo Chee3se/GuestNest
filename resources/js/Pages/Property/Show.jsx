@@ -2,11 +2,12 @@ import {Head, Link, router} from "@inertiajs/react";
 import Layout from "@/Layouts/Layout.jsx";
 import ClickableImage from "@/Components/ClickableImage.jsx";
 import { useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import DateInput from "@/Components/Reserve/DateInput.jsx";
 import NumberInput from "@/Components/Reserve/NumberInput.jsx";
 import InputError from "@/Components/InputError.jsx";
 import Notification from "@/Components/Reserve/Notification.jsx";
+import CommentSection from "@/Components/Properties/CommentSection.jsx";
 
 export default function Index({ auth, property }) {
     const [notificationStatus, setStatus] = useState('');
@@ -56,6 +57,7 @@ export default function Index({ auth, property }) {
                         <div className="col-span-3 pb-10">
                             <ClickableImage src={property.images[0].path} alt={property.title}
                                             className="w-full h-96 object-cover rounded"/>
+                            <Link href={route('gallery', {id: property.id})}> <p className="text-center text-lg text-gray-600 dark:text-gray-300">View Gallery</p></Link>
                         </div>
                         <div className="col-span-2 px-6 py-6 flex flex-col gap-4 lg:border-x-2">
                             <p className="text-xl font-semibold text-gray-900 dark:text-gray-100">Hosted
@@ -108,7 +110,7 @@ export default function Index({ auth, property }) {
                         </div>
                         <div className="col-span-2 lg:col-span-1 lg:border-r-2 flex flex-col gap-8">
                             <p className="ml-6 mr-0 lg:mx-auto text-xl font-normal text-gray-700 dark:text-gray-300"><span
-                                className="font-semibold text-gray-900 dark:text-gray-100">${property.price}</span> night
+                                className="font-semibold text-gray-900 dark:text-gray-100">€{property.price}</span> night
                             </p>
                             <form onSubmit={submit} method="POST" className="flex flex-col px-6">
                                 <div className="grid grid-cols-2 gap-4">
@@ -134,14 +136,17 @@ export default function Index({ auth, property }) {
 
                                 <button
                                     className={`my-10 mx-auto btn overflow-hidden relative w-64 py-4 px-4 rounded-xl font-bold uppercase -- before:block before:absolute before:h-full before:w-full before:bg-pink-600 before:left-0 before:top-0 before:-translate-y-full ${property.available ? 'hover:before:translate-y-0 before:transition-transform bg-cyan-400 text-white' : 'bg-gray-400 text-gray-500 cursor-not-allowed'}`}
-                                    disabled={!property.available}
+                                    disabled={!property.available || property.user.id === auth.user.id}
                                 >
                                     <span className="relative">Reserve</span>
                                 </button>
                             </form>
+                            <p className="ml-6 mr-0 lg:mx-auto text-xl font-semibold text-gray-900 dark:text-gray-100"> <span className="font-normal text-gray-700 dark:text-gray-300">total price </span>€{property.price * data.guests}
+                            </p>
                         </div>
                     </div>
                     <Notification status={notificationStatus} message={notificationMessage} show={notificationShow} countdown={countdown}/>
+                    <CommentSection property={property}/>
                 </div>
 
             </div>

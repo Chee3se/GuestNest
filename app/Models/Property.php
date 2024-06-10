@@ -9,9 +9,27 @@ class Property extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'description',
+        'category_id',
+        'price',
+        'guests',
+        'bedrooms',
+        'beds',
+        'baths',
+        'address',
+        'user_id',
+    ];
+
     public function images()
     {
         return $this->hasMany(Image::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->with('user');
     }
 
     public function thumbnail()

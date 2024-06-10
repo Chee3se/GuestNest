@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             PropertySeeder::class,
             ImageSeeder::class,
+            CommentSeeder::class,
         ]);
     }
 }
