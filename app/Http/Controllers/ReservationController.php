@@ -18,20 +18,35 @@ class ReservationController extends Controller
 
         $property = Property::findOrFail($id);
 
+        $existingReservation = Reservation::where('property_id', $property->id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if ($existingReservation) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You have already created a reservation for this listing!'
+            ]);
+        }
+
         try {
             Reservation::create([
                 'property_id' => $property->id,
                 'user_id' => auth()->id(),
-                'check_in' => $request->check_in,
-                'check_out' => $request->check_out,
-                'guests' => $request->guests,
+                'check_in' => $request->get('check_in'),
+                'check_out' => $request->get('check_out'),
+                'guests' => $request->get('guests'),
             ]);
 
-            return redirect()->route('property.show', $property->id)
-                ->with('success', 'Reservation made successfully');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Reservation made successfully'
+            ]);
         } catch (\Exception $e) {
-            return redirect()->route('property.show', $property->id)
-                ->with('error', 'An error occurred while making the reservation');
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while making the reservation'
+            ]);
         }
     }
 

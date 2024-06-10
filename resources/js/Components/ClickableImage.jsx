@@ -5,7 +5,6 @@ export default function ClickableImage({ src, alt, className }) {
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
     function openModal() {
-        console.log('Image clicked');
         setModalIsOpen(true);
     }
 

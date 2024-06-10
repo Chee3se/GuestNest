@@ -27,7 +27,6 @@ export default function PropertyBrowser() {
             page,
             perPage
         });
-        console.log(response.data);
         setEntries(response.data.data);
         setLoading(false);
         setTotalPages(Math.ceil(response.data.total / perPage));

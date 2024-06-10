@@ -12,7 +12,7 @@ export default function NumberInput({ id, label, defaultValue, min, max, onChang
 
     return (
         <div>
-            <label htmlFor={id} className="block text-sm font-medium text-gray-700">{label}</label>
+            <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-100">{label}</label>
             <input type="number" id={id} name={id} value={value} onChange={handleChange} min={min} max={max} className="mt-1 p-2 w-full border rounded-md" required />
         </div>
     );

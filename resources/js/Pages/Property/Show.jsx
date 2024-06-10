@@ -2,11 +2,18 @@ import {Head, Link, router} from "@inertiajs/react";
 import Layout from "@/Layouts/Layout.jsx";
 import ClickableImage from "@/Components/ClickableImage.jsx";
 import { useForm } from '@inertiajs/react';
+import { useState } from 'react';
 import DateInput from "@/Components/Reserve/DateInput.jsx";
 import NumberInput from "@/Components/Reserve/NumberInput.jsx";
 import InputError from "@/Components/InputError.jsx";
+import Notification from "@/Components/Reserve/Notification.jsx";
 
 export default function Index({ auth, property }) {
+    const [notificationStatus, setStatus] = useState('');
+    const [notificationMessage, setMessage] = useState('');
+    const [notificationShow, setShow] = useState(false);
+    const countdown = 5000;
+    const cooldown = 2000;
     const { data, setData, post, processing, errors } = useForm({
         check_in: new Date().toISOString().split('T')[0],
         check_out: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -15,16 +22,26 @@ export default function Index({ auth, property }) {
 
     const submit = (e) => {
         e.preventDefault();
+
         if (!auth.user) {
             router.get(route('login'));
             return;
         }
-        post(route('property.reserve', property.id));
+        axios.post(route('property.reserve', {id: property.id}), data)
+            .then((res) => {
+                console.log(res.data);
+                const data = res.data;
+                setStatus(data.status);
+                setMessage(data.message);
+                setShow(true);
+            })
+            .then(() => {
+                setTimeout(() => {
+                    setShow(false);
+                }, countdown + cooldown);
+            })
+
     };
-
-    const onSuccess = () => {
-
-    }
 
     return (
         <Layout
@@ -96,16 +113,23 @@ export default function Index({ auth, property }) {
                             <form onSubmit={submit} method="POST" className="flex flex-col px-6">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="flex flex-col pb-4">
-                                        <DateInput id="check_in" label="Check-in" defaultValue={new Date().toISOString().split('T')[0]} minDate={new Date().toISOString().split('T')[0]} onChange={(value) => setData('check_in', value)} />
+                                        <DateInput id="check_in" label="Check-in"
+                                                   defaultValue={new Date().toISOString().split('T')[0]}
+                                                   minDate={new Date().toISOString().split('T')[0]}
+                                                   onChange={(value) => setData('check_in', value)}/>
                                         <InputError message={errors.check_in} className="mt-2"/>
                                     </div>
                                     <div className="flex flex-col pb-4">
-                                        <DateInput id="check_out" label="Checkout" defaultValue={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]} minDate={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]} onChange={(value) => setData('check_out', value)} />
+                                        <DateInput id="check_out" label="Checkout"
+                                                   defaultValue={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                                                   minDate={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                                                   onChange={(value) => setData('check_out', value)}/>
                                         <InputError message={errors.check_out} className="mt-2"/>
                                     </div>
                                 </div>
 
-                                <NumberInput id="guests" label="Guests" min="1" max={property.guests} defaultValue={1} onChange={(value) => setData('guests', value)} />
+                                <NumberInput id="guests" label="Guests" min="1" max={property.guests} defaultValue={1}
+                                             onChange={(value) => setData('guests', value)}/>
                                 <InputError message={errors.guests} className="mt-2"/>
 
                                 <button
@@ -117,7 +141,9 @@ export default function Index({ auth, property }) {
                             </form>
                         </div>
                     </div>
+                    <Notification status={notificationStatus} message={notificationMessage} show={notificationShow} countdown={countdown}/>
                 </div>
+
             </div>
         </Layout>
     )
