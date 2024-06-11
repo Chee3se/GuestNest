@@ -31,6 +31,19 @@ export default function Index({ auth }) {
                 console.error(error);
             });
     }
+    function deleteProperty(propertyId) {
+        axios.delete(route('property.delete', propertyId))
+            .then(response => {
+                // Re-fetch the properties
+                axios.get(route('user.properties'))
+                    .then(response => setProperties(response.data));
+            })
+            .catch(error => {
+                // Handle the error
+                console.error(error);
+            });
+    }
+
 
     return (
         <Layout user={auth.user}>
@@ -52,13 +65,15 @@ export default function Index({ auth }) {
                             </button>
                         </div>
                         {properties.map((property) => (
-                            <Link key={property.id} href={route('property.show', property.id)} className="my-2">
-                                <div className="flex flex-col w-full bg-gray-100 rounded-lg shadow-md p-4">
-                                    <h3 className="text-xl font-semibold">{property.name}</h3>
-                                    <p className="text-lg">{property.address}</p>
-
-                                </div>
-                            </Link>
+                            <div key={property.id} className="my-2 flex justify-between items-center">
+                                <Link href={route('property.show', property.id)} className="flex-grow">
+                                    <div className="flex flex-col w-full bg-gray-100 rounded-lg shadow-md p-4">
+                                        <h3 className="text-xl font-semibold">{property.name}</h3>
+                                        <p className="text-lg">{property.address}</p>
+                                    </div>
+                                </Link>
+                                <button onClick={() => deleteProperty(property.id)} className="bg-red-500 text-white py-2 px-4 rounded-none cursor-pointer ml-4">Delete</button>
+                            </div>
                         ))}
                         <h2 className="text-2xl font-semibold mt-8 mb-4">Reservation Requests</h2>
                         {reservations.map((reservation) => (

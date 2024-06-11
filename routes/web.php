@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ReservationController;
@@ -40,10 +41,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/comment/{id}', [CommentController::class, 'store'])->name('comments.store');
 });
 
-Route::get('/gallery/{id}', [PropertyController::class, 'gallery'])->name('gallery');
+Route::get('/gallery/{id}', [GalleryController::class, 'index'])->name('gallery');
 
-Route::post('/property/{id}/images', [PropertyController::class, 'uploadImage'])->name('property.images.upload');
-Route::delete('/property/{id}/images/{imageId}', [PropertyController::class, 'deleteImage'])->name('property.images.delete');
+Route::post('/property/{id}/images', [GalleryController::class, 'upload'])->name('property.images.upload');
+Route::delete('/property/{id}/images/{imageId}', [GalleryController::class, 'delete'])->name('property.images.delete');
+Route::post('/property/{id}/images/{imageId}/setMain', [GalleryController::class, 'setMain'])->name('property.images.setMain');
+Route::get('/property/{id}/images', [GalleryController::class, 'get'])->name('property.images');
+Route::delete('/property/{id}', [PropertyController::class, 'destroy'])->name('property.delete');
 
 
 require __DIR__.'/dashboard.php';

@@ -136,7 +136,7 @@ export default function Index({ auth, property }) {
 
                                 <button
                                     className={`my-10 mx-auto btn overflow-hidden relative w-64 py-4 px-4 rounded-xl font-bold uppercase -- before:block before:absolute before:h-full before:w-full before:bg-pink-600 before:left-0 before:top-0 before:-translate-y-full ${property.available ? 'hover:before:translate-y-0 before:transition-transform bg-cyan-400 text-white' : 'bg-gray-400 text-gray-500 cursor-not-allowed'}`}
-                                    disabled={!property.available || property.user.id === auth.user.id}
+                                    disabled={!property.available || property.user?.id === auth.user?.id}
                                 >
                                     <span className="relative">Reserve</span>
                                 </button>
