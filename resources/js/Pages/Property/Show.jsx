@@ -30,7 +30,6 @@ export default function Index({ auth, property }) {
         }
         axios.post(route('property.reserve', {id: property.id}), data)
             .then((res) => {
-                console.log(res.data);
                 const data = res.data;
                 setStatus(data.status);
                 setMessage(data.message);
@@ -55,7 +54,7 @@ export default function Index({ auth, property }) {
                     <h1 className="lg:text-8xl text-6xl font-semibold w-fit text-transparent bg-clip-text bg-gradient-to-r from-[#00DBDE] to-[#FC00FF] h-40">{property.title}</h1>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                         <div className="col-span-3 pb-10">
-                            <ClickableImage src={property.images[0].path} alt={property.title}
+                            <ClickableImage src={property.images[0]?.path} alt={property.title}
                                             className="w-full h-96 object-cover rounded"/>
                             <Link href={route('gallery', {id: property.id})}> <p className="text-center text-lg text-gray-600 dark:text-gray-300">View Gallery</p></Link>
                         </div>

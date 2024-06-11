@@ -39,16 +39,14 @@ Route::patch('/reservations/{reservation}', [ReservationController::class, 'upda
 //Comments
 Route::middleware('auth')->group(function () {
     Route::post('/comment/{id}', [CommentController::class, 'store'])->name('comments.store');
+
+    Route::get('/gallery/{id}', [GalleryController::class, 'index'])->name('gallery');
+    Route::post('/property/{id}/images', [GalleryController::class, 'upload'])->name('property.images.upload');
+    Route::delete('/property/{id}/images/{imageId}', [GalleryController::class, 'delete'])->name('property.images.delete');
+    Route::post('/property/{id}/images/{imageId}/setMain', [GalleryController::class, 'setMain'])->name('property.images.setMain');
+    Route::get('/property/{id}/images', [GalleryController::class, 'get'])->name('property.images');
+    Route::delete('/property/{id}', [PropertyController::class, 'destroy'])->name('property.delete');
 });
-
-Route::get('/gallery/{id}', [GalleryController::class, 'index'])->name('gallery');
-
-Route::post('/property/{id}/images', [GalleryController::class, 'upload'])->name('property.images.upload');
-Route::delete('/property/{id}/images/{imageId}', [GalleryController::class, 'delete'])->name('property.images.delete');
-Route::post('/property/{id}/images/{imageId}/setMain', [GalleryController::class, 'setMain'])->name('property.images.setMain');
-Route::get('/property/{id}/images', [GalleryController::class, 'get'])->name('property.images');
-Route::delete('/property/{id}', [PropertyController::class, 'destroy'])->name('property.delete');
-
 
 require __DIR__.'/dashboard.php';
 
@@ -57,3 +55,14 @@ require __DIR__.'/properties.php';
 require __DIR__.'/auth.php';
 
 require __DIR__.'/reservations.php';
+
+/*
+    Fix comments make coool ass rating and some message charachter limit
+
+    Make better looking reservations images and shit
+
+    Make it so users can cancel their reservations
+
+    Make user dashboard better
+
+*/

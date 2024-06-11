@@ -6,7 +6,6 @@ import { useForm } from '@inertiajs/react';
 import axios from 'axios';
 
 export default function Gallery({ auth, property }) {
-    console.log(property);
 
     const [images, setImages] = useState(property.images);
 
@@ -69,8 +68,16 @@ export default function Gallery({ auth, property }) {
                                 <ClickableImage src={image.path} alt='image' className="w-full h-full object-cover rounded" />
                                 {auth.user.id === property.user_id && (
                                     <>
-                                        <button onClick={() => deleteImage(image.id)} className="absolute top-0 right-0 bg-red-500 text-white rounded-none cursor-pointer p-2">Delete</button>
-                                        <input type="radio" name="mainImage" value={image.id} onChange={() => setMainImage(image.id)} checked={image.is_main} className="absolute bottom-0 left-0"/>
+                                        <button
+                                            onClick={() => deleteImage(image.id)}
+                                            className="mt-4 absolute top-0 right-0 middle none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-red-500/20 transition-all hover:shadow-lg hover:shadow-red-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                            data-ripple-light="true"
+                                        >
+                                            Delete
+                                        </button>
+                                        <input type="radio" name="mainImage" value={image.id}
+                                               onChange={() => setMainImage(image.id)} checked={image.is_main}
+                                               className="absolute bottom-0 left-0"/>
                                     </>
                                 )}
                             </div>
