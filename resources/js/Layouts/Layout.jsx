@@ -19,7 +19,7 @@ export default function Layout({ user, header, children }) {
                             <ApplicationLogo className="hidden xl:block h-10 w-auto fill-current text-gray-500 dark:text-gray-300" />
                         </Link>
                         <div className="flex pl-10">
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div className="hidden lg:space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink href={route('home')} active={route().current('home')}>
                                     Home
                                 </NavLink>
@@ -131,6 +131,22 @@ export default function Layout({ user, header, children }) {
                         <ResponsiveNavLink href={route('property.index')} active={route().current('property.index')}>
                             Browse
                         </ResponsiveNavLink>
+                        {user ? (
+                            <>
+                                <ResponsiveNavLink href={route('reservations.index')} active={route().current('reservations.index')}>
+                                    Reservations
+                                </ResponsiveNavLink>
+                                {user?.roles[0]?.name === 'admin' ? (
+                                    <ResponsiveNavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
+                                        Admin Dashboard
+                                    </ResponsiveNavLink>
+                                ) : (
+                                    <ResponsiveNavLink href={route('user.dashboard')} active={route().current('user.dashboard')}>
+                                        Dashboard
+                                    </ResponsiveNavLink>
+                                )}
+                            </>
+                        ) : null}
                     </div>
 
                     {user ? (<div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">

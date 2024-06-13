@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +17,7 @@ class GalleryController extends Controller
         ]);
     }
 
-    public function upload(Request $request, $id)
+    public function save(Request $request, $id)
     {
         $property = Property::find($id);
 
@@ -40,38 +41,31 @@ class GalleryController extends Controller
         return back()->with('success','Image uploaded successfully.');
     }
 
-    public function delete($id, $imageId)
+    public function delete($id)
     {
-        $property = Property::find($id);
-
-        // Check if the authenticated user is the owner of the property
-        if (auth()->id() !== $property->user_id) {
-            return back()->with('error', 'You are not authorized to perform this action.');
-        }
-
-        $image = $property->images()->find($imageId);
+        $image = Image::find($id);
 
         if ($image) {
             // Delete the image from the storage
             Storage::delete('public/' . substr($image->path, strlen('/storage/')));
 
             $image->delete();
-            return back()->with('success','Image deleted successfully.');
+            return response()->json(['message' => 'Reservation deleted successfully']);
         }
 
-        return back()->with('error','Image not found.');
+        return response()->json(['message' => 'Reservation deleted successfully']);
     }
 
-    public function setMain($id, $imageId)
+    public function main($id)
     {
-        $property = Property::find($id);
+        $image = Image::find($id);
+
+        $property = Property::find($image->property_id);
 
         // Check if the authenticated user is the owner of the property
         if (auth()->id() !== $property->user_id) {
             return back()->with('error', 'You are not authorized to perform this action.');
         }
-
-        $image = $property->images()->find($imageId);
 
         if ($image) {
             // Unset the main image flag for all images of the property

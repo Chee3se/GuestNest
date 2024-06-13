@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
@@ -31,21 +32,22 @@ Route::middleware('role:admin')->group(function () {
     Route::delete('/admin/users/delete/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
 });
 
-Route::get('/user/properties', [PropertyController::class, 'userProperties'])->name('user.properties');
-Route::get('/user/reservations', [ReservationController::class, 'userReservations'])->name('user.reservations');
 
-Route::patch('/reservations/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
-
-//Comments
 Route::middleware('auth')->group(function () {
+    // Comments
     Route::post('/comment/{id}', [CommentController::class, 'store'])->name('comments.store');
 
-    Route::get('/gallery/{id}', [GalleryController::class, 'index'])->name('gallery');
-    Route::post('/property/{id}/images', [GalleryController::class, 'upload'])->name('property.images.upload');
-    Route::delete('/property/{id}/images/{imageId}', [GalleryController::class, 'delete'])->name('property.images.delete');
-    Route::post('/property/{id}/images/{imageId}/setMain', [GalleryController::class, 'setMain'])->name('property.images.setMain');
-    Route::get('/property/{id}/images', [GalleryController::class, 'get'])->name('property.images');
-    Route::delete('/property/{id}', [PropertyController::class, 'destroy'])->name('property.delete');
+    // Gallery
+    Route::get('/gallery/{id}', [GalleryController::class, 'index'])->name('gallery.index');
+    Route::get('/api/gallery/{id}', [GalleryController::class, 'get'])->name('gallery.get');
+
+    Route::post('/gallery/{id}', [GalleryController::class, 'save'])->name('gallery.save');
+    Route::delete('/gallery/{id}', [GalleryController::class, 'delete'])->name('gallery.delete');
+    Route::post('/gallery/{id}/main', [GalleryController::class, 'main'])->name('gallery.main');
+
+    //Dashboard
+    Route::get('/user/properties', [DashboardController::class, 'properties'])->name('user.properties');
+    Route::get('/user/reservations', [DashboardController::class, 'reservations'])->name('user.reservations');
 });
 
 require __DIR__.'/dashboard.php';
@@ -57,12 +59,14 @@ require __DIR__.'/auth.php';
 require __DIR__.'/reservations.php';
 
 /*
-    Fix comments make coool ass rating and some message charachter limit
+    Fix comments make coool ass rating and some message charachter limit DONE
 
-    Make better looking reservations images and shit
+    Make better looking reservations images and shit DONE
 
-    Make it so users can cancel their reservations
+    Make it so users can cancel their reservations DONE
 
     Make user dashboard better
+
+    Make galerry better
 
 */

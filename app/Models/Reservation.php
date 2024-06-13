@@ -21,4 +21,15 @@ class Reservation extends Model
     {
         return $this->belongsTo(Property::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function thumbnail()
+    {
+        return $this->belongsTo(Image::class, 'property_id', 'property_id')
+            ->where('is_main', true);
+    }
 }

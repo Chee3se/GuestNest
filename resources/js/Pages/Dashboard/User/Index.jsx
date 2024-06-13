@@ -3,45 +3,61 @@ import {Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import CreatePropertyForm from "@/Components/Properties/CreatePropertyForm.jsx";
 import axios from "axios";
+import EditPropertyForm from "@/Components/Properties/EditPropertyForm.jsx";
 
 export default function Index({ auth }) {
     const [properties, setProperties] = useState([]);
     const [reservations, setReservations] = useState([]);
     const [showCreatePropertyForm, setShowCreatePropertyForm] = useState(false);
+    const [showEditPropertyForm, setShowEditPropertyForm] = useState(false);
+    const [selectedProperty, setSelectedProperty] = useState(null);
 
     useEffect(() => {
         axios.get(route('user.properties'))
-            .then(response => setProperties(response.data));
+            .then(response => {
+                setProperties(response.data);
+            });
 
         axios.get(route('user.reservations'))
-            .then(response => setReservations(response.data));
+            .then(response => {
+                setReservations(response.data);
+                console.log(response.data)
+            });
     }, []);
 
-    function approveReservation(reservationId) {
-        axios.patch(route('reservations.update', reservationId), {
-            approved: true
-        })
+    const deleteProperty = (id) => {
+        axios.delete(route('property.destroy', id))
             .then(response => {
-                // Re-fetch the reservations
-                axios.get(route('user.reservations'))
-                    .then(response => setReservations(response.data));
-            })
-            .catch(error => {
-                // Handle the error
-                console.error(error);
+                setProperties(properties.filter(property => property.id !== id));
             });
     }
-    function deleteProperty(propertyId) {
-        axios.delete(route('property.delete', propertyId))
-            .then(response => {
-                // Re-fetch the properties
-                axios.get(route('user.properties'))
-                    .then(response => setProperties(response.data));
+
+    const editProperty = (property) => {
+        console.log(property);
+        setSelectedProperty(property);
+        setShowEditPropertyForm(true);
+    }
+
+    const createProperty = (e) => {
+        e.preventDefault();
+        setShowCreatePropertyForm(true);
+        console.log('create property');
+    }
+
+    const handleReservation = (id, status) => {
+        if (status !== 'denied') {
+            axios.patch(route('reservations.update', id), {
+                approved: 'approved'
             })
-            .catch(error => {
-                // Handle the error
-                console.error(error);
-            });
+                .then(response => {
+                    setReservations(reservations.filter(reservation => reservation.id !== id));
+                });
+        } else {
+            axios.delete(route('reservations.destroy', id))
+                .then(response => {
+                    setReservations(reservations.filter(reservation => reservation.id !== id));
+                });
+        }
     }
 
 
@@ -51,44 +67,88 @@ export default function Index({ auth }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 flex items-center flex-col">
                     <h1 className="sm:text-8xl text-6xl w-fit text-transparent bg-clip-text bg-gradient-to-r from-[#00DBDE] to-[#FC00FF] font-semibold h-40">Dashboard</h1>
-                    <div className="flex flex-col w-full bg-white rounded-lg shadow-lg p-8">
-                        <CreatePropertyForm show={showCreatePropertyForm} onClose={() => setShowCreatePropertyForm(false)}/>
-                        <div className="flex flex-row">
-                            <h2 className="text-2xl font-semibold mb-4">Your Properties</h2>
-                            <button onClick={() => setShowCreatePropertyForm(true)}
-                                    className="bg-green-700 p-2 rounded-lg text-white hover:bg-green-600 duration-200 ml-auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                     stroke="currentColor" className="h-6 w-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                                </svg>
-                            </button>
-                        </div>
-                        {properties.map((property) => (
-                            <div key={property.id} className="my-2 flex justify-between items-center">
-                                <Link href={route('property.show', property.id)} className="flex-grow">
-                                    <div className="flex flex-col w-full bg-gray-100 rounded-lg shadow-md p-4">
-                                        <h3 className="text-xl font-semibold">{property.name}</h3>
-                                        <p className="text-lg">{property.address}</p>
-                                    </div>
+                    <h2 className="text-5xl text-gray-600 my-6 py-2 text-transparent bg-clip-text bg-gradient-to-r from-[#00DBDE] to-[#FC00FF] font-semibold">listings</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {properties.map((property, index) => (
+                            <div key={property.id}
+                                  className="z-10 w-72 bg-white dark:bg-gray-950 shadow-md rounded p-4 flex flex-col mx-auto">
+                                <Link href={route('property.show', property.id)}>
+                                <img src={property.thumbnail?.path} alt={property.title}
+                                     className="w-full md:w-64 h-64 object-cover rounded"/>
                                 </Link>
-                                <button onClick={() => deleteProperty(property.id)} className="bg-red-500 text-white py-2 px-4 rounded-none cursor-pointer ml-4">Delete</button>
+                                <h2 className="text-2xl text-gray-800 dark:text-gray-100 font-bold py-2">{property.title}</h2>
+                                <div className="flex flex-row items-center gap-2 pt-6">
+
+                                    <button
+                                        className="middle z-20 none center rounded-lg bg-orange-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-orange-500/20 transition-all hover:shadow-lg hover:shadow-orange-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                        data-ripple-light="true"
+                                        onClick={() => editProperty(property)}
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        className="ml-auto z-20 middle none center rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-red-500/20 transition-all hover:shadow-lg hover:shadow-red-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                        data-ripple-light="true"
+                                        onClick={() => deleteProperty(property.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                                <div className="flex flex-row items-center gap-2 pt-6">
+                                    <p className="w-32 text-gray-950 dark:text-gray-100 font-semibold">€ {property.price}
+                                        <span className="text-gray-700 dark:text-gray-300 font-normal"> night</span></p>
+                                    <p className={`mt-auto pt-2 mb-2 ml-auto mr-2 ${property.available ? 'text-green-500' : 'text-red-500'}`}>{property.available ? 'available' : 'not available'}</p>
+                                </div>
                             </div>
                         ))}
-                        <h2 className="text-2xl font-semibold mt-8 mb-4">Reservation Requests</h2>
-                        {reservations.map((reservation) => (
+                    </div>
+                    <button
+                        className=" ml-4 mt-10 middle none center mr-4 rounded-lg bg-green-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                        data-ripple-light="true"
+                        onClick={createProperty}
+                    >
+                        Create
+                    </button>
+                    <CreatePropertyForm onClose={() => {setShowCreatePropertyForm(false)}} show={showCreatePropertyForm}/>
+                    <EditPropertyForm onClose={() => {setShowEditPropertyForm(false)}} show={showEditPropertyForm} property={selectedProperty}/>
+                    <h2 className="text-5xl text-gray-600 my-6 py-2 text-transparent bg-clip-text bg-gradient-to-r from-[#00DBDE] to-[#FC00FF] font-semibold">requests</h2>
+                    <div className="flex flex-col w-full">
+                        {reservations.map((reservation, index) => (
                             <div key={reservation.id}
-                                 className={`flex flex-col w-full bg-gray-100 rounded-lg shadow-md p-4 my-2 ${reservation.approved ? 'border-green-500 border-4' : 'border-red-500 border-4'}`}>
-                                <h3 className="text-xl font-semibold">{reservation.property.name}</h3>
-                                <p className="text-lg">{reservation.property.address}</p>
-                                <p className="text-lg">{reservation.check_in} - {reservation.check_out}</p>
-                                <p className="text-lg">{reservation.approved ? 'Accepted' : 'Not Accepted'}</p>
-                                {!reservation.approved ? (
-                                    <button onClick={() => approveReservation(reservation.id)}
-                                            className="bg-green-700 p-2 rounded-lg text-white hover:bg-green-600 duration-200 mt-2">
+                                 className={`relative flex flex-col w-full dark:bg-gray-800 rounded-lg shadow-lg p-4 my-2 border-yellow-500 border-4 bg-yellow-50`}>
+                                <div
+                                    className="bg-gray-100 py-2 px-4 rounded-xl w-fit mb-4 border-2 border-gray-300 dark:bg-gray-900 dark:border-gray-950">
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">guests</p>
+                                    <p className="text-lg dark:text-gray-300">{reservation.guests}</p>
+                                </div>
+                                <div
+                                    className="bg-gray-100 py-2 px-4 rounded-xl w-fit mb-4 border-2 border-gray-300 dark:bg-gray-900 dark:border-gray-950">
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">time to stay</p>
+                                    <p className="text-lg dark:text-gray-300">{Math.floor((new Date(reservation.check_out) - new Date(reservation.check_in)) / (1000 * 60 * 60 * 24))} day/s</p>
+                                </div>
+                                <div
+                                    className="bg-gray-100 py-2 px-4 rounded-xl w-fit mb-4 border-2 border-gray-300 dark:bg-gray-900 dark:border-gray-950">
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">email</p>
+                                    <p className="text-lg dark:text-gray-300">{reservation.user.email}</p>
+                                </div>
+                                <div>
+                                    <button
+                                        className="middle none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-red-500/20 transition-all hover:shadow-lg hover:shadow-red-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                        data-ripple-light="true"
+                                        onClick={() => handleReservation(reservation.id, 'denied')}
+                                    >
+                                        Deny
+                                    </button>
+                                    <button
+                                        className=" ml-4 mt-10 middle none center mr-4 rounded-lg bg-green-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                        data-ripple-light="true"
+                                        onClick={() => handleReservation(reservation.id, 'approved')}
+                                    >
                                         Approve
                                     </button>
-                                ) : null}
+                                </div>
+                                <img src={reservation.thumbnail.path} alt={reservation.property.title}
+                                     className="lg:absolute w-max h-60 right-8 top-1.5 object-cover rounded-lg my-2"/>
                             </div>
                         ))}
                     </div>

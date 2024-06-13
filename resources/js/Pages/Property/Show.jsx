@@ -53,10 +53,10 @@ export default function Index({ auth, property }) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 flex items-center flex-col">
                     <h1 className="lg:text-8xl text-6xl font-semibold w-fit text-transparent bg-clip-text bg-gradient-to-r from-[#00DBDE] to-[#FC00FF] h-40">{property.title}</h1>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                        <div className="col-span-3 pb-10">
+                        <div className="relative col-span-3 pb-10">
                             <ClickableImage src={property.images[0]?.path} alt={property.title}
                                             className="w-full h-96 object-cover rounded"/>
-                            <Link href={route('gallery', {id: property.id})}> <p className="text-center text-lg text-gray-600 dark:text-gray-300">View Gallery</p></Link>
+                            <Link href={route('gallery.index', {id: property.id})}> <p className="right-4 bottom-12 absolute text-center text-lg text-gray-900 dark:bg-gray-800 dark:border-gray-200 bg-gray-100 rounded-xl px-4 border-2 border-gray-700 font-semibold dark:text-gray-200">Show all photos</p></Link>
                         </div>
                         <div className="col-span-2 px-6 py-6 flex flex-col gap-4 lg:border-x-2">
                             <p className="text-xl font-semibold text-gray-900 dark:text-gray-100">Hosted
@@ -134,18 +134,20 @@ export default function Index({ auth, property }) {
                                 <InputError message={errors.guests} className="mt-2"/>
 
                                 <button
-                                    className={`my-10 mx-auto btn overflow-hidden relative w-64 py-4 px-4 rounded-xl font-bold uppercase -- before:block before:absolute before:h-full before:w-full before:bg-pink-600 before:left-0 before:top-0 before:-translate-y-full ${property.available ? 'hover:before:translate-y-0 before:transition-transform bg-cyan-400 text-white' : 'bg-gray-400 text-gray-500 cursor-not-allowed'}`}
+                                    className={`my-10 mx-auto btn overflow-hidden relative w-64 py-4 px-4 rounded-xl font-bold uppercase -- before:block before:absolute before:h-full before:w-full before:bg-pink-600 before:left-0 before:top-0 before:-translate-y-full ${(property.available && property.user?.id !== auth.user?.id) ? 'hover:before:translate-y-0 before:transition-transform bg-cyan-400 text-white' : 'bg-gray-400 text-gray-500 cursor-not-allowed'}`}
                                     disabled={!property.available || property.user?.id === auth.user?.id}
                                 >
                                     <span className="relative">Reserve</span>
                                 </button>
                             </form>
-                            <p className="ml-6 mr-0 lg:mx-auto text-xl font-semibold text-gray-900 dark:text-gray-100"> <span className="font-normal text-gray-700 dark:text-gray-300">total price </span>€{property.price * data.guests}
+                            <p className="ml-6 mr-0 lg:mx-auto text-xl font-semibold text-gray-900 dark:text-gray-100"> <span className="font-normal text-gray-700 dark:text-gray-300">total price </span>€{property.price * Math.round(Math.abs((new Date(data.check_out) - new Date(data.check_in)) / (1000 * 60 * 60 * 24)))}
                             </p>
                         </div>
                     </div>
                     <Notification status={notificationStatus} message={notificationMessage} show={notificationShow} countdown={countdown}/>
-                    <CommentSection property={property}/>
+                    {property.user?.id !== auth.user?.id && (
+                        <CommentSection property={property} auth={auth}/>
+                    )}
                 </div>
 
             </div>

@@ -11,7 +11,7 @@ class ReservationController extends Controller
 {
     public function index()
     {
-        $reservations = Reservation::with('property')
+        $reservations = Reservation::with(['property', 'thumbnail'])
             ->where('user_id', auth()->id())
             ->get();
 
@@ -22,21 +22,32 @@ class ReservationController extends Controller
     public function store(Request $request, $id)
     {
         $request->validate([
-            'check_in' => 'required|date',
-            'check_out' => 'required|date|after:from',
+            'check_in' => 'required|date|after_or_equal:today',
+            'check_out' => 'required|date|after:check_in',
             'guests' => 'required|integer|min:1',
         ]);
 
         $property = Property::findOrFail($id);
 
+        if ($property->user_id === auth()->id()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You cannot reserve a property you own!'
+            ]);
+        }
+
         $existingReservation = Reservation::where('property_id', $property->id)
             ->where('user_id', auth()->id())
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('check_in', [$request->get('check_in'), $request->get('check_out')])
+                    ->orWhereBetween('check_out', [$request->get('check_in'), $request->get('check_out')]);
+            })
             ->first();
 
         if ($existingReservation) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'You have already created a reservation for this listing!'
+                'message' => 'You already have a reservation waiting for approval!'
             ]);
         }
 
@@ -61,8 +72,10 @@ class ReservationController extends Controller
         }
     }
 
-    public function update(Request $request, Reservation $reservation)
+    public function update(Request $request, $id)
     {
+        $reservation = Reservation::with('property')->findOrFail($id);
+
         // Check if the authenticated user is the owner of the property
         if (auth()->id() !== $reservation->property->user_id) {
             return response()->json(['error' => 'You do not have permission to approve this reservation'], 403);
@@ -81,13 +94,11 @@ class ReservationController extends Controller
         return response()->json(['message' => 'Reservation updated successfully']);
     }
 
-    public function userReservations()
+    public function destroy($id)
     {
-        $userProperties = Property::where('user_id', auth()->id())->pluck('id');
+        // Check if the authenticated user is the owner of the property
+        Reservation::findOrFail($id)->delete();
 
-        return Reservation::whereIn('property_id', $userProperties)
-            ->with('property')
-            ->get();
+        return response()->json(['message' => 'Reservation deleted successfully']);
     }
-
 }
