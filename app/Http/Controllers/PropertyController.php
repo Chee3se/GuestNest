@@ -39,13 +39,13 @@ class PropertyController extends Controller
     {
         $validatedData = $request->validate([
             'title' => 'required|max:255',
-            'description' => 'required',
+            'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric',
-            'guests' => 'required|numeric',
-            'bedrooms' => 'required|numeric',
-            'beds' => 'required|numeric',
-            'baths' => 'required|numeric',
+            'price' => 'required|numeric|min:1',
+            'guests' => 'required|numeric|min:1',
+            'bedrooms' => 'required|numeric|min:1',
+            'beds' => 'required|numeric|min:1',
+            'baths' => 'required|numeric|min:0',
             'address' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);

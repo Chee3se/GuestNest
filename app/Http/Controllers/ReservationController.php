@@ -21,13 +21,14 @@ class ReservationController extends Controller
     }
     public function store(Request $request, $id)
     {
+
+        $property = Property::findOrFail($id);
+
         $request->validate([
             'check_in' => 'required|date|after_or_equal:today',
             'check_out' => 'required|date|after:check_in',
-            'guests' => 'required|integer|min:1',
+            'guests' => 'required|integer|min:1|max:'.$property->guests,
         ]);
-
-        $property = Property::findOrFail($id);
 
         if ($property->user_id === auth()->id()) {
             return response()->json([

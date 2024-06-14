@@ -4,7 +4,7 @@ import { router } from "@inertiajs/react";
 import Comment from "@/Components/Properties/Comment.jsx";
 
 export default function CommentSection({ property, auth }) {
-    const [newComment, setNewComment] = useState({ content: '', rating: 0 });
+    const [newComment, setNewComment] = useState({ content: '', rating: 1 });
     const [comments, setComments] = useState(property.comments);
     const [commentLength, setCommentLength] = useState(0);
 
